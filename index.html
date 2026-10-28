@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudyHub — Login</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,Arial,sans-serif}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f4f6f9;color:#222}
+.login-card{width:min(430px,92%);background:#fff;padding:34px;border-radius:16px;box-shadow:0 12px 40px #00000018;border:1px solid #e7eaf0}
+.logo{text-align:center;font-size:30px;font-weight:800;color:#243b6b;margin-bottom:8px}
+.subtitle{text-align:center;color:#667085;margin-bottom:28px}
+label{display:block;font-weight:700;font-size:13px;color:#344054;margin:14px 0 7px}
+input{width:100%;padding:12px;border:1px solid #ccd2dc;border-radius:8px;font-size:15px;outline:none}
+input:focus{border-color:#243b6b;box-shadow:0 0 0 3px #243b6b18}
+button{width:100%;border:0;padding:12px;border-radius:8px;background:#243b6b;color:white;font-size:15px;font-weight:700;cursor:pointer;margin-top:20px}
+button:hover{background:#182b50}
+.error{display:none;margin-top:14px;padding:11px;border-radius:8px;background:#fee2e2;color:#b42318;font-size:13px;font-weight:600}
+.demo{margin-top:24px;padding:14px;background:#f7f8fa;border-radius:10px;font-size:13px;color:#475467;line-height:1.7}
+.demo b{color:#243b6b}
+</style>
+</head>
+<body>
+<div class="login-card">
+  <div class="logo">📖 StudyHub</div>
+  <p class="subtitle">Assignment Management Portal</p>
+
+  <form id="loginForm">
+    <label for="username">Username</label>
+    <input id="username" type="text" placeholder="Enter username" autocomplete="username" required>
+
+    <label for="password">Password</label>
+    <input id="password" type="password" placeholder="Enter password" autocomplete="current-password" required>
+
+    <button type="submit">Login</button>
+    <div class="error" id="error">Invalid username or password.</div>
+  </form>
+
+ 
+<script>
+document.getElementById('loginForm').addEventListener('submit', function(e){
+  e.preventDefault();
+
+  const username = document.getElementById('username').value.trim().toLowerCase();
+  const password = document.getElementById('password').value;
+  const error = document.getElementById('error');
+
+  if(username === 'student' && password === 'student123'){
+    window.location.href = 'student.html';
+  } 
+  else if(username === 'teacher' && password === 'teacher123'){
+    window.location.href = 'teacher.html';
+  } 
+  else {
+    error.style.display = 'block';
+  }
+});
+</script>
+</body>
+</html>

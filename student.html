@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduTrack — Assignment Management</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,Arial,sans-serif}
+:root{--navy:#243b6b;--navy2:#182b50;--light:#f4f6f9;--card:#fff;--muted:#667085;--line:#e7eaf0;--blue:#e9efff;--green:#d4edda;--yellow:#fff3cd;--red:#fee2e2}
+body{background:var(--light);color:#222;min-height:100vh}
+button,input,textarea,select{font:inherit}
+.navbar{height:68px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 30px;position:sticky;top:0;z-index:20}
+.logo{font-size:24px;font-weight:800;letter-spacing:-.5px}.logo span{opacity:.7}
+.nav-right{display:flex;align-items:center;gap:18px}.icon-btn{border:0;background:#ffffff18;color:#fff;width:40px;height:40px;border-radius:50%;cursor:pointer}.profile{background:#ffffff18;padding:9px 15px;border-radius:22px;font-weight:700}
+.layout{display:flex;min-height:calc(100vh - 68px)}
+.sidebar{width:235px;background:#fff;padding:22px 14px;box-shadow:2px 0 10px #0000000d;flex-shrink:0}
+.sidebar h3{color:var(--navy);font-size:14px;margin:4px 12px 16px;text-transform:uppercase;letter-spacing:.08em}
+.menu{list-style:none}.menu li{padding:13px 14px;margin:5px 0;border-radius:9px;cursor:pointer;color:#475467;font-weight:600;transition:.2s}
+.menu li:hover,.menu li.active{background:var(--blue);color:var(--navy)}
+.main{flex:1;padding:28px;max-width:1500px;margin:auto;width:100%}
+.view{display:none}.view.active{display:block}
+.welcome{display:flex;justify-content:space-between;gap:20px;align-items:end;margin-bottom:24px}.welcome h1{color:var(--navy);font-size:29px;margin-bottom:7px}.welcome p{color:var(--muted)}
+.btn{border:0;padding:10px 16px;border-radius:8px;background:var(--navy);color:#fff;cursor:pointer;font-weight:700;transition:.2s}.btn:hover{background:var(--navy2);transform:translateY(-1px)}.btn.secondary{background:#eef1f5;color:#344054}.btn.success{background:#18794e}.btn.danger{background:#b42318}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:25px}.stat-card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 3px 10px #0000000d;border:1px solid #eef0f4}.stat-card .label{color:#777;font-size:13px;font-weight:700;margin-bottom:9px}.stat-card h2{font-size:29px;color:var(--navy)}.stat-card small{color:#18794e;font-weight:700}
+.section{background:#fff;border:1px solid #eef0f4;border-radius:12px;padding:21px;box-shadow:0 3px 10px #00000009;margin-bottom:22px}.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px}.section h2{color:var(--navy);font-size:20px}
+.assignment-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.assignment-card{background:#fff;border:1px solid var(--line);padding:20px;border-radius:12px;box-shadow:0 3px 10px #00000009}.assignment-card h3{color:var(--navy);margin-bottom:9px}.assignment-card p{color:#667085;font-size:14px;line-height:1.55;margin-bottom:8px}.deadline{font-weight:700!important;color:#344054!important;margin-top:12px}.status{display:inline-block;padding:5px 10px;border-radius:20px;font-size:12px;font-weight:800;margin:7px 0 12px}.pending{background:var(--yellow);color:#856404}.submitted{background:var(--green);color:#155724}.graded{background:#dbeafe;color:#1e40af}.late{background:var(--red);color:#b42318}.row-actions{display:flex;gap:8px;flex-wrap:wrap}
+.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:13px;border-bottom:1px solid #eee;white-space:nowrap}th{background:#f7f8fa;color:var(--navy);font-size:13px}td{font-size:14px}
+.progress{height:8px;background:#edf0f5;border-radius:8px;overflow:hidden}.progress div{height:100%;background:var(--navy);border-radius:8px}
+.chart{display:flex;align-items:end;gap:12px;height:190px;padding:18px 10px 0}.bar{flex:1;background:var(--navy);border-radius:6px 6px 0 0;min-height:20px;position:relative}.bar span{position:absolute;top:-23px;width:100%;text-align:center;font-size:11px;font-weight:700;color:#475467}.chart-labels{display:flex;gap:12px}.chart-labels div{flex:1;text-align:center;color:#667085;font-size:11px}
+.insights{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.insight{padding:15px;border:1px solid var(--line);border-radius:10px;background:#fafbfc}.insight b{display:block;color:var(--navy);margin-bottom:6px}.insight p{font-size:13px;color:#667085;line-height:1.5}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.form-group{margin-bottom:15px}.form-group.full{grid-column:1/-1}.form-group label{display:block;margin-bottom:6px;font-weight:700;font-size:13px;color:#344054}.form-group input,.form-group textarea,.form-group select{width:100%;padding:11px;border:1px solid #ccd2dc;border-radius:7px;outline:none}.form-group textarea{min-height:100px;resize:vertical}
+.modal{display:none;position:fixed;inset:0;background:#0008;justify-content:center;align-items:center;z-index:50;padding:20px}.modal.show{display:flex}.modal-content{background:#fff;width:min(620px,100%);padding:26px;border-radius:14px;max-height:90vh;overflow:auto}.modal-content h2{color:var(--navy);margin-bottom:18px}.form-buttons{display:flex;gap:10px;margin-top:18px}
+.toast{position:fixed;right:25px;bottom:25px;background:#182b50;color:#fff;padding:14px 18px;border-radius:10px;display:none;z-index:100;box-shadow:0 8px 30px #0003}.toast.show{display:block}
+.notification-panel{display:none;position:absolute;right:20px;top:58px;background:#fff;color:#222;width:330px;border-radius:12px;box-shadow:0 10px 30px #0003;padding:15px}.notification-panel.show{display:block}.notification{padding:12px;border-bottom:1px solid #eee;font-size:13px}.notification:last-child{border:0}.notification b{color:var(--navy)}
+.role-switch{display:flex;gap:7px;background:#eef1f5;padding:5px;border-radius:9px}.role-switch button{border:0;padding:8px 12px;border-radius:7px;cursor:pointer;background:transparent;font-weight:700;color:#475467}.role-switch button.active{background:#fff;color:var(--navy);box-shadow:0 2px 6px #0001}
+.empty{text-align:center;padding:45px;color:#667085}.hero-chip{display:inline-block;background:#e9efff;color:var(--navy);padding:6px 10px;border-radius:20px;font-size:12px;font-weight:800;margin-bottom:12px}
+@media(max-width:1050px){.stats{grid-template-columns:repeat(2,1fr)}.assignment-grid{grid-template-columns:repeat(2,1fr)}.insights{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){.sidebar{display:none}.main{padding:18px}.stats,.assignment-grid,.insights,.form-grid{grid-template-columns:1fr}.welcome{align-items:start;flex-direction:column}.navbar{padding:0 15px}.logo{font-size:20px}.profile{padding:8px 10px}.section{padding:16px}}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="logo">📖 StudyHub <span>•</span></div>
+  <div class="nav-right">
+    <div style="position:relative">
+      <button class="icon-btn" onclick="toggleNotifications()">🔔</button>
+      <div class="notification-panel" id="notifications">
+        <div class="notification"><b>New assignment</b><br>Data Structures Assignment 3 was created.</div>
+        <div class="notification"><b>Grade published</b><br>Database Management: 92/100.</div>
+        <div class="notification"><b>Deadline reminder</b><br>Web Development is due tomorrow.</div>
+      </div>
+    </div>
+    <span class="profile">Shivam • Student</span>
+  </div>
+</nav>
+
+<div class="layout">
+<aside class="sidebar">
+  <h3 id="menuTitle">Student Menu</h3>
+  <ul class="menu" id="studentMenu">
+    <li class="active" onclick="showView('studentDashboard',this)">🏠 Dashboard</li>
+    <li onclick="showView('studentAssignments',this)">📚 Assignments</li>
+    <li onclick="showView('studentSubmissions',this)">📤 My Submissions</li>
+    <li onclick="showView('studentGrades',this)">⭐ Grades</li>
+    <li onclick="showView('studentCalendar',this)">📅 Calendar</li>
+    <li onclick="showView('studentProfile',this)">👤 Profile</li>
+  </ul>
+</aside>
+
+<main class="main">
+
+<!-- STUDENT DASHBOARD -->
+<section class="view active" id="studentDashboard">
+<div class="welcome"><div><span class="hero-chip">DIGITAL ACADEMIC WORKSPACE</span><h1>Welcome back, Shivam! 👋</h1><p>Track assignments, submissions, grades and feedback from one place.</p></div></div>
+<div class="stats">
+<div class="stat-card"><div class="label">TOTAL ASSIGNMENTS</div><h2 id="sTotal">8</h2><small>↑ 2 this week</small></div>
+<div class="stat-card"><div class="label">SUBMITTED</div><h2 id="sSubmitted">5</h2><small>62.5% complete</small></div>
+<div class="stat-card"><div class="label">PENDING</div><h2 id="sPending">2</h2><small style="color:#b54708">Action needed</small></div>
+<div class="stat-card"><div class="label">AVERAGE SCORE</div><h2 id="sAvg">86%</h2><small>↑ 4% improvement</small></div>
+</div>
+<div class="section"><div class="section-header"><h2>My Assignments</h2><button class="btn" onclick="showView('studentAssignments')">View all</button></div><div class="assignment-grid" id="studentCards"></div></div>
+<div class="section"><div class="section-header"><h2>Performance Trend</h2><span style="font-size:13px;color:#667085">Last 6 graded assignments</span></div><div class="chart"><div class="bar" style="height:62%"><span>78%</span></div><div class="bar" style="height:70%"><span>82%</span></div><div class="bar" style="height:76%"><span>86%</span></div><div class="bar" style="height:82%"><span>89%</span></div><div class="bar" style="height:86%"><span>92%</span></div><div class="bar" style="height:80%"><span>88%</span></div></div><div class="chart-labels"><div>DS</div><div>Python</div><div>DBMS</div><div>CN</div><div>Math</div><div>AI</div></div></div>
+</section>
+
+<section class="view" id="studentAssignments">
+<div class="welcome"><div><h1>Assignments</h1><p>Everything assigned to you, organized by status.</p></div></div>
+<div class="section"><div class="assignment-grid" id="allStudentCards"></div></div>
+</section>
+
+<section class="view" id="studentSubmissions">
+<div class="welcome"><div><h1>My Submissions</h1><p>Track every submission and its review status.</p></div></div>
+<div class="section"><div class="table-wrap"><table><thead><tr><th>Assignment</th><th>Submitted</th><th>Status</th><th>Grade</th><th>Action</th></tr></thead><tbody id="submissionRows"></tbody></table></div></div>
+</section>
+
+<section class="view" id="studentGrades">
+<div class="welcome"><div><h1>Grades & Feedback</h1><p>See published scores and teacher comments.</p></div></div>
+<div class="stats"><div class="stat-card"><div class="label">AVERAGE</div><h2>86%</h2></div><div class="stat-card"><div class="label">HIGHEST</div><h2>94%</h2></div><div class="stat-card"><div class="label">GRADED</div><h2>6</h2></div><div class="stat-card"><div class="label">FEEDBACK</div><h2>6</h2></div></div>
+<div class="section"><div class="table-wrap"><table><thead><tr><th>Assignment</th><th>Score</th><th>Percentage</th><th>Teacher Feedback</th></tr></thead><tbody>
+<tr><td>Database Management</td><td><b>92/100</b></td><td>92%</td><td>Excellent SQL design and clear normalization.</td></tr>
+<tr><td>Computer Networks</td><td><b>88/100</b></td><td>88%</td><td>Good work. Explain routing protocols more deeply.</td></tr>
+<tr><td>Python Programming</td><td><b>86/100</b></td><td>86%</td><td>Strong OOP implementation and clean code.</td></tr>
+</tbody></table></div></div>
+</section>
+
+<section class="view" id="studentCalendar">
+<div class="welcome"><div><h1>Assignment Calendar</h1><p>Your upcoming academic deadlines.</p></div></div>
+<div class="section"><div class="assignment-grid">
+<div class="assignment-card"><h3>Web Development</h3><p>Due 10 October 2026</p><span class="status pending">Tomorrow</span></div>
+<div class="assignment-card"><h3>Python Programming</h3><p>Due 12 October 2026</p><span class="status submitted">Submitted</span></div>
+<div class="assignment-card"><h3>Database Management</h3><p>Due 15 October 2026</p><span class="status graded">Graded</span></div>
+</div></div>
+</section>
+
+<section class="view" id="studentProfile">
+<div class="welcome"><div><h1>Profile</h1><p>Your EduTrack student profile.</p></div></div>
+<div class="section"><div class="form-grid"><div class="form-group"><label>Full Name</label><input value="Shivam Vishwakarma"></div><div class="form-group"><label>Email</label><input value="shivam@example.com"></div><div class="form-group"><label>Program</label><input value="Artificial Intelligence & Machine Learning"></div><div class="form-group"><label>Year</label><input value="2nd Year"></div></div><button class="btn" onclick="toast('Profile updated successfully')">Save Profile</button></div>
+</section>
+</main></div>
+<!-- SUBMIT MODAL -->
+<div class="modal" id="submitModal"><div class="modal-content">
+<h2>📤 Submit Assignment</h2>
+<div class="form-group"><label>Select Assignment</label><select id="submitAssignmentSelect"></select></div>
+<div class="form-group"><label>Upload Assignment</label><input type="file" id="fileInput"></div>
+<div class="form-group"><label>Comments</label><textarea id="submitComment" placeholder="Add a note for your teacher..."></textarea></div>
+<div class="form-buttons"><button class="btn success" onclick="submitAssignment()">Submit Assignment</button><button class="btn secondary" onclick="closeModal('submitModal')">Cancel</button></div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let assignments=[
+{id:1,title:'Web Development',subject:'Web Development',desc:'Create a responsive website using HTML, CSS and JavaScript.',due:'2026-10-10',status:'Pending',score:null},
+{id:2,title:'Python Programming',subject:'Python Programming',desc:'Implement object-oriented programming concepts in Python.',due:'2026-10-12',status:'Submitted',score:null},
+{id:3,title:'Database Management',subject:'Database Management',desc:'Design a relational database and write SQL queries.',due:'2026-10-15',status:'Graded',score:92},
+{id:4,title:'Computer Networks',subject:'Computer Networks',desc:'Explain routing protocols and compare network architectures.',due:'2026-10-18',status:'Graded',score:88},
+{id:5,title:'Artificial Intelligence',subject:'AI Fundamentals',desc:'Explain supervised and unsupervised learning with examples.',due:'2026-10-20',status:'Pending',score:null},
+{id:6,title:'Discrete Mathematics',subject:'Mathematics',desc:'Solve relations, graphs and combinatorics problems.',due:'2026-10-22',status:'Graded',score:94}
+];
+let submissions=[
+{id:1,student:'Shivam Vishwakarma',assignment:2,date:'08 Oct 2026',status:'Submitted',score:null},
+{id:2,student:'Shivam Vishwakarma',assignment:3,date:'05 Oct 2026',status:'Graded',score:92}
+];
+function toast(msg){let t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600)}
+function toggleNotifications(){document.getElementById('notifications').classList.toggle('show')}
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+function showView(id,el){
+ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+ if(el){document.querySelectorAll('.menu li').forEach(x=>x.classList.remove('active'));el.classList.add('active')}
+ renderStudent();
+}
+function statusClass(s){return s==='Pending'?'pending':s==='Submitted'?'submitted':s==='Graded'?'graded':'late'}
+function assignmentName(id){let a=assignments.find(x=>x.id==id);return a?a.title:'Assignment'}
+function renderStudent(){
+ let cards=assignments.map(a=>`<div class="assignment-card"><h3>${a.title}</h3><p>${a.desc}</p><p class="deadline">📅 Deadline: ${new Date(a.due).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</p><span class="status ${statusClass(a.status)}">${a.status}${a.score!==null?' • '+a.score+'/100':''}</span><div class="row-actions">${a.status==='Pending'?`<button class="btn" onclick="openSubmit(${a.id})">Submit</button>`:`<button class="btn secondary" onclick="toast('${a.status==='Graded'?'Grade: '+a.score+'/100':'Submission recorded'}')">${a.status==='Graded'?'View Grade':'View Submission'}</button>`}</div></div>`).join('');
+ document.getElementById('studentCards').innerHTML=cards.slice(0,3);
+ document.getElementById('allStudentCards').innerHTML=cards;
+ document.getElementById('submissionRows').innerHTML=submissions.map(s=>`<tr><td>${assignmentName(s.assignment)}</td><td>${s.date}</td><td><span class="status ${statusClass(s.status)}">${s.status}</span></td><td>${s.score?s.score+'/100':'Pending'}</td><td><button class="btn secondary" onclick="toast('${s.score?'Grade: '+s.score+'/100':'Submission under review'}')">View</button></td></tr>`).join('');
+ document.getElementById('sTotal').textContent=assignments.length;
+ document.getElementById('sSubmitted').textContent=assignments.filter(a=>a.status!=='Pending').length;
+ document.getElementById('sPending').textContent=assignments.filter(a=>a.status==='Pending').length;
+ let graded=assignments.filter(a=>a.score!==null);document.getElementById('sAvg').textContent=Math.round(graded.reduce((x,a)=>x+a.score,0)/graded.length)+'%';
+ document.getElementById('submitAssignmentSelect').innerHTML=assignments.filter(a=>a.status==='Pending').map(a=>`<option value="${a.id}">${a.title}</option>`).join('');
+}
+function openSubmit(id){document.getElementById('submitAssignmentSelect').value=id;document.getElementById('submitModal').classList.add('show')}
+function submitAssignment(){
+ let id=Number(document.getElementById('submitAssignmentSelect').value),a=assignments.find(x=>x.id===id);
+ if(!a)return;
+ a.status='Submitted';
+ submissions.unshift({id:Date.now(),student:'Shivam Vishwakarma',assignment:id,date:'08 Oct 2026',status:'Submitted',score:null});
+ closeModal('submitModal');renderStudent();toast('Assignment submitted successfully! ✅');
+}
+window.onclick=e=>{if(e.target.classList.contains('modal'))e.target.classList.remove('show')}
+renderStudent();
+</script>
+</body>
+</html>
